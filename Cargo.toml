@@ -1,0 +1,8 @@
+[package]
+name = "image-data"
+version = "0.1.0"
+authors = ["Aaron Lee <alee@aaronosaur.us>"]
+
+[dependencies]
+
+kamadak-exif = "0.3"

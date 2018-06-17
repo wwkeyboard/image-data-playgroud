@@ -1,0 +1,14 @@
+[[package]]
+name = "image-data"
+version = "0.1.0"
+dependencies = [
+ "kamadak-exif 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "kamadak-exif"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum kamadak-exif 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4238df812a77bbe62aad168146882eefa95ca7607164f939190a9072a08d01d6"

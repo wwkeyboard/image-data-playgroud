@@ -1,11 +1,13 @@
 use std::fs::File;
 use std::io::BufReader;
+use std::env;
 extern crate exif;
 
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
 
-    let filename = "test.ARW";
+    println!("reading {}", filename);
     let file = File::open(filename).expect("opening file");
 
     let reader = exif::Reader::new(&mut BufReader::new(&file)).expect("building reader");

@@ -13,7 +13,6 @@ fn main() {
     let reader = exif::Reader::new(&mut BufReader::new(&file)).expect("building reader");
 
     for f in reader.fields() {
-        
             let thumb = if f.thumbnail {"1/"} else {"0/"};
             println!(" {} --{}--: {}", thumb, f.tag, f.value.display_as(f.tag));
         }

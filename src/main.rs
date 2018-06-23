@@ -4,8 +4,7 @@ use std::env;
 extern crate exif;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
+    let filename: String = env::args().nth(1).expect("must supply filename");
 
     println!("reading {}", filename);
     let file = File::open(filename).expect("opening file");

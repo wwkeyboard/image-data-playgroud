@@ -1,6 +1,9 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::env;
+use std::path::{PathBuf,Path};
+use std::io::Result as IOResult;
+use std::fs;
 
 use exif::{Tag,Value};
 
@@ -41,8 +44,9 @@ impl Picture {
     }
 }
 
-fn read_raw(filename: &str) -> Result<Picture, String> {
-    let file = File::open(&filename).expect("opening file");
+fn read_raw(filename: &PathBuf) -> Result<Picture, String> {
+    let filename = filename.to_str().expect("blah");
+    let file = File::open(filename).expect("opening file");
 
     let reader = match exif::Reader::new(&mut BufReader::new(&file)){
         Ok(r) => r,
@@ -79,11 +83,32 @@ fn read_raw(filename: &str) -> Result<Picture, String> {
     Ok(pic)
 }
 
+fn images(p: String) -> IOResult<Vec<PathBuf>> {
+    let mut paths = Vec::new();
+
+    for entry in fs::read_dir(p)? {
+        let entry = entry?;
+        let data = entry.metadata()?;
+        let path = entry.path();
+        if data.is_file() {
+            if let Some(ex) = path.extension() {
+                if ex == "ARW" {
+                    paths.push(path.clone());
+                }
+            }
+        }
+    }
+    Ok(paths)
+}
+
 fn main() {
-    let filename: String = env::args().nth(1).expect("must supply filename");
+    let imagedir: String = env::args().nth(1).expect("must supply directory to search");
 
-    let dat = read_raw(&filename).expect("reading file");
+    // let dat = read_raw(&filename).expect("reading file");
 
-    println!("{:?}", dat)
-
+    // println!("{:?}", dat)
+    let paths = images(imagedir).expect("reading file names");
+    for p in paths {
+        println!("{:?}", read_raw(&p).expect("reading file"));
+    }
 }

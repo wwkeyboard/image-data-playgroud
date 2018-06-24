@@ -2,14 +2,16 @@ use std::fs::File;
 use std::io::BufReader;
 use std::env;
 
-use exif::Tag;
+use exif::{Tag,Value};
 
 extern crate exif;
 
 #[derive(Debug)]
 struct Picture {
     make: String,
-    model: String
+    model: String,
+    exposure_time: f64,
+    aperture: f64,
 }
 
 impl Picture {
@@ -17,6 +19,8 @@ impl Picture {
         Picture {
             make: "".to_string(),
             model: "".to_string(),
+            exposure_time: 0_f64,
+            aperture: 0_f64,
         }
     }
 
@@ -26,6 +30,14 @@ impl Picture {
 
     fn set_model(&mut self, model: String) {
         self.model = model;
+    }
+
+    fn set_exposure_time(&mut self, exptime: f64) {
+        self.exposure_time = exptime;
+    }
+
+    fn set_aperture(&mut self, ap: f64) {
+        self.aperture = ap;
     }
 }
 
@@ -38,14 +50,31 @@ fn read_raw(filename: &str) -> Result<Picture, String> {
     };
 
     let mut pic = Picture::new();
-
-    for f in reader.fields() {
-            match f.tag {
-                Tag::Make => pic.set_make(f.value.display_as(f.tag).to_string() ),
-                Tag::Model => pic.set_model(f.value.display_as(f.tag).to_string() ),
-                _ => continue
-            }
+     
+    if let Some(field) = reader.get_field(Tag::ExposureTime, false) {
+        match field.value {
+            Value::Rational(ref vec) if !vec.is_empty() =>
+                pic.set_exposure_time(vec[0].to_f64()),
+            _ => {},
         }
+    }
+
+    if let Some(field) = reader.get_field(Tag::ApertureValue, false) {
+        match field.value {
+            Value::Rational(ref vec) if !vec.is_empty() =>
+                pic.set_aperture(vec[0].to_f64()),
+            _ => {},
+
+        }
+    }
+
+    if let Some(field) = reader.get_field(Tag::Make, false) {
+        pic.set_make(field.value.display_as(field.tag).to_string())
+    }
+
+    if let Some(field) = reader.get_field(Tag::Model, false) {
+        pic.set_model(field.value.display_as(field.tag).to_string())
+    }
 
     Ok(pic)
 }

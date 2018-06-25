@@ -63,8 +63,8 @@ fn read_raw(filename: &PathBuf) -> Result<Picture, String> {
         }
     }
 
-    if let Some(field) = reader.get_field(Tag::ApertureValue, false) {
-        match field.value {
+    if let Some(field) = reader.get_field(Tag::FNumber, false) {
+        match field.value { 
             Value::Rational(ref vec) if !vec.is_empty() =>
                 pic.set_aperture(vec[0].to_f64()),
             _ => {},

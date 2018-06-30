@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::env;
-use std::path::{PathBuf,Path};
+use std::path::{PathBuf};
 use std::io::Result as IOResult;
 use std::fs;
 
@@ -54,7 +54,7 @@ fn read_raw(filename: &PathBuf) -> Result<Picture, String> {
     };
 
     let mut pic = Picture::new();
-     
+
     if let Some(field) = reader.get_field(Tag::ExposureTime, false) {
         match field.value {
             Value::Rational(ref vec) if !vec.is_empty() =>
@@ -64,7 +64,7 @@ fn read_raw(filename: &PathBuf) -> Result<Picture, String> {
     }
 
     if let Some(field) = reader.get_field(Tag::FNumber, false) {
-        match field.value { 
+        match field.value {
             Value::Rational(ref vec) if !vec.is_empty() =>
                 pic.set_aperture(vec[0].to_f64()),
             _ => {},
